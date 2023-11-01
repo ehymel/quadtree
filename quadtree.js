@@ -27,17 +27,25 @@ class QuadTree {
             return;
         }
 
-        this.subdivide();
+        if (!this.divided) {
+            this.subdivide();
+            this.divided = true;
+        }
     }
 
     subdivide() {
-        let ne = new Rectangle(this.boundary.x + this.boundary.w/2, this.boundary.y + this.boundary.h/2, this.boundary.w/2, this.boundary.h/2);
+        let x = this.boundary.x;
+        let y = this.boundary.y;
+        let w = this.boundary.w;
+        let h = this.boundary.h;
+
+        let ne = new Rectangle(x + w/2, y + h/2, w/2, h/2);
         this.northEast = new QuadTree(ne, this.capacity);
-        let nw = new Rectangle(this.boundary.x - this.boundary.w/2, this.boundary.y + this.boundary.h/2, this.boundary.w/2, this.boundary.h/2);
+        let nw = new Rectangle(x - w/2, y + h/2, w/2, h/2);
         this.northWest = new QuadTree(nw, this.capacity);
-        let sw = new Rectangle(this.boundary.x - this.boundary.w/2, this.boundary.y - this.boundary.h/2, this.boundary.w/2, this.boundary.h/2);
+        let sw = new Rectangle(x - w/2, y - h/2, w/2, h/2);
         this.southWest = new QuadTree(sw, this.capacity);
-        let se = new Rectangle(this.boundary.x + this.boundary.w/2, this.boundary.y - this.boundary.h/2, this.boundary.w/2, this.boundary.h/2);
+        let se = new Rectangle(x + w/2, y - h/2, w/2, h/2);
         this.southEast = new QuadTree(se, this.capacity);
     }
 }
