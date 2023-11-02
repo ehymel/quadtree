@@ -11,6 +11,13 @@ class Rectangle {
         this.w = w;
         this.h = h;
     }
+
+    contains(point) {
+        return this.x - w/2 > point.location.x ||
+            this.x + w/2 > point.location.x ||
+            this.y - y/2 < point.location.y ||
+            this.y + y/2 > point.location.y;
+    }
 }
 
 class QuadTree {
@@ -22,6 +29,10 @@ class QuadTree {
     }
 
     insert(point) {
+        if (!this.boundary.contains(point)) {
+            return;
+        }
+
         if (this.points.length < this.capacity) {
             this.points.push(point);
             return;
@@ -31,6 +42,11 @@ class QuadTree {
             this.subdivide();
             this.divided = true;
         }
+
+        this.northEast.insert(point);
+        this.southEast.insert(point);
+        this.southWest.insert(point);
+        this.northWest.insert(point);
     }
 
     subdivide() {
