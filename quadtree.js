@@ -27,6 +27,26 @@ class Rectangle {
     }
 }
 
+class Circle {
+    constructor(x, y, r) {
+        this.x = x;
+        this.y = y;
+        this.r = r;
+    }
+
+    contains(point) {
+        return dist(this.x, this.y, point.location.x, point.location.y) <= this.r;
+    }
+
+    intersects(range) {
+        // need to check this
+        return !(range.x - range.w > this.x + this.r ||
+            range.x + range.w < this.x - this.r ||
+            range.y - range.h > this.y + this.r ||
+            range.y + range.h < this.y - this.r);
+    }
+}
+
 class QuadTree {
     constructor(boundary, capacity) {
         this.boundary = boundary;

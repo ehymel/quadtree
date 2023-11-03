@@ -17,9 +17,11 @@ function setup() {
     qtree.show();
 
     stroke(255, 0, 0);
-    rectMode(CENTER);
-    let range = new Rectangle(250, 250, 53, 68);
-    rect(range.x, range.y, range.w * 2, range.h * 2);
+    // rectMode(CENTER);
+    // let range = new Rectangle(250, 250, 53, 68);
+    // rect(range.x, range.y, range.w * 2, range.h * 2);
+    let range = new Circle(250, 250, 124);
+    circle(range.x, range.y, range.r*2);
 
     let points = qtree.queryRange(range);
 
