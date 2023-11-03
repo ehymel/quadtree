@@ -18,6 +18,13 @@ class Rectangle {
             point.location.y <= this.y + this.h &&
             point.location.y > this.y - this.h;
     }
+
+    intersects(range) {
+        return !(range.x - range.w > this.x + this.w ||
+            range.x + range.w < this.x - this.w ||
+            range.y - range.h > this.y + this.h ||
+            range.y + range.h < this.y - this.w);
+    }
 }
 
 class QuadTree {
@@ -30,16 +37,16 @@ class QuadTree {
 
     insert(point) {
         if (!this.boundary.contains(point)) {
-            return;
+            return false;
         }
 
         if (this.divided) {
-            this.insertIntoDivisions(point);
+            return this.insertIntoDivisions(point);
         }
 
         if (this.points.length < this.capacity) {
             this.points.push(point);
-            return;
+            return true;
         }
 
         this.subdivide();
@@ -55,10 +62,10 @@ class QuadTree {
     }
 
     insertIntoDivisions(point) {
-        this.northWest.insert(point);
-        this.northEast.insert(point);
-        this.southEast.insert(point);
-        this.southWest.insert(point);
+        return this.northWest.insert(point) ||
+            this.northEast.insert(point) ||
+            this.southEast.insert(point) ||
+            this.southWest.insert(point);
     }
 
     subdivide() {
@@ -79,6 +86,30 @@ class QuadTree {
         this.divided = true;
     }
 
+    queryRange(range, found) {
+        if (!found) {
+            found = [];
+        }
+
+        if (!this.boundary.intersects(range)) {
+            return found;
+        }
+
+        for (let p of this.points) {
+            if (range.contains(p)) {
+                found.push(p);
+            }
+        }
+        if (this.divided) {
+            this.northEast.queryRange(range, found);
+            this.northWest.queryRange(range, found);
+            this.southEast.queryRange(range, found);
+            this.southWest.queryRange(range, found);
+        }
+
+        return found;
+    }
+
     show() {
         stroke(255);
         strokeWeight(1);
@@ -94,7 +125,7 @@ class QuadTree {
         }
 
         for (let p of this.points) {
-            strokeWeight(4);
+            strokeWeight(2);
             point(p.location.x, p.location.y);
         }
     }

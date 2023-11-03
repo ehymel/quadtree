@@ -1,19 +1,30 @@
+let qtree;
+
 function setup() {
     createCanvas(600, 400);
 
     // initial boundary should include the entire canvas
     // center of initial boundary is center of canvas
     let boundary = new Rectangle(width/2, height/2, width/2, height/2);
-    let qt = new QuadTree(boundary, 4);
+    qtree = new QuadTree(boundary, 4);
 
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 1500; i++) {
         let p = new Point(random(width), random(height));
-        qt.insert(p);
+        qtree.insert(p);
     }
 
     background(0);
+    qtree.show();
 
-    qt.show();
+    stroke(255, 0, 0);
+    rectMode(CENTER);
+    let range = new Rectangle(250, 250, 53, 68);
+    rect(range.x, range.y, range.w * 2, range.h * 2);
 
-    console.log(qt);
+    let points = qtree.queryRange(range);
+
+    for (let p of points) {
+        strokeWeight(2);
+        point(p.location.x, p.location.y);
+    }
 }
