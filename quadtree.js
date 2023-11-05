@@ -20,10 +20,25 @@ class Rectangle {
     }
 
     intersects(range) {
-        return !(range.x - range.w > this.x + this.w ||
-            range.x + range.w < this.x - this.w ||
-            range.y - range.h > this.y + this.h ||
-            range.y + range.h < this.y - this.w);
+        if (undefined !== range.w || undefined !== range.h) {
+            return !(range.x - range.w > this.x + this.w ||
+                range.x + range.w < this.x - this.w ||
+                range.y - range.h > this.y + this.h ||
+                range.y + range.h < this.y - this.w);
+        }
+
+        if (undefined !== range.r) {
+            // if any edge of rectangle inside circle, return true
+            let xdiff = abs(range.x - this.x) - this.w,
+                ydiff = abs(range.y - this.y) - this.h;
+
+            if (xdiff > range.r || ydiff > range.r) { return false; }
+            if (xdiff <= 0 || ydiff <= 0) { return true; }
+
+            return (xdiff * xdiff + ydiff * ydiff <= range.rSquared);
+        }
+
+        return undefined;
     }
 }
 
@@ -32,18 +47,14 @@ class Circle {
         this.x = x;
         this.y = y;
         this.r = r;
+        this.rSquared = r * r;
     }
 
     contains(point) {
-        return dist(this.x, this.y, point.location.x, point.location.y) <= this.r;
-    }
+        let xdiff = this.x - point.location.x;
+        let ydiff = this.y - point.location.y;
 
-    intersects(range) {
-        // need to check this
-        return !(range.x - range.w > this.x + this.r ||
-            range.x + range.w < this.x - this.r ||
-            range.y - range.h > this.y + this.r ||
-            range.y + range.h < this.y - this.r);
+        return (xdiff * xdiff + ydiff * ydiff) <= this.rSquared;
     }
 }
 
@@ -115,11 +126,16 @@ class QuadTree {
             return found;
         }
 
+        if (!this.divided) {
+            this.shade();
+        }
+
         for (let p of this.points) {
             if (range.contains(p)) {
                 found.push(p);
             }
         }
+
         if (this.divided) {
             this.northEast.queryRange(range, found);
             this.northWest.queryRange(range, found);
@@ -128,6 +144,14 @@ class QuadTree {
         }
 
         return found;
+    }
+
+    shade() {
+        stroke(255);
+        strokeWeight(1);
+        fill(255, 204, 0);
+        rectMode(CENTER);
+        rect(this.boundary.x, this.boundary.y, this.boundary.w * 2, this.boundary.h * 2);
     }
 
     show() {

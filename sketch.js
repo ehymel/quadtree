@@ -20,8 +20,7 @@ function setup() {
     // rectMode(CENTER);
     // let range = new Rectangle(250, 250, 53, 68);
     // rect(range.x, range.y, range.w * 2, range.h * 2);
-    let range = new Circle(250, 250, 124);
-    circle(range.x, range.y, range.r*2);
+    let range = new Circle(255, 245, 26);
 
     let points = qtree.queryRange(range);
 
@@ -29,4 +28,6 @@ function setup() {
         strokeWeight(2);
         point(p.location.x, p.location.y);
     }
+
+    circle(range.x, range.y, range.r*2);
 }
